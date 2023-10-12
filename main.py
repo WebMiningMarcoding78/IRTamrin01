@@ -1,6 +1,8 @@
 import re
 from hazm import *
 import os
+import codecs
+import sets
 
 def extract_persian_text(file_path):
     with open(file_path, 'rb') as file:
@@ -45,23 +47,7 @@ def saveListTofiles(file_path, my_list):
     with open(file_path, 'w') as file:
         for item in my_list:
             file.write(str(item) + "\n")
-            if len(item) > 8 : 
-                print(item)
-
-
-
-def main():
-    # loadFirstTime()
-    # films = ["Skyscraper_persian.txt","Sleepless_persian.txt","Star_persian.txt","The_persian.txt","We_Have_Always_Lived_in_the_Castle_persian.txt"]
-    films = ["Skyscraper_persian.txt"]
-    
-    
-    for film in films :
-        filmSentences = findallSentences(film)
-        normalize_text = normalizer(filmSentences)
-        tokenizedTokens = tokenize(normalize_text)
-        saveListTofiles("tokens/"+ film,tokenizedTokens)
-        # print(tokenizedTokens)
+        file.write("\n")
         
 
 def normalizer(filmSentences):
@@ -87,8 +73,32 @@ def findallSentences(file_path):
     for line in lines:
         line = line.strip()
         if line:
-           temp = temp + line
+           temp = temp + line + " "
     return temp
+
+def removeStopWords(tokens):
+    stopWords = set(codecs.open('stopWords/persian', encoding='utf-8').read().split('\n'))
+    temp = []
+    for t in tokens:
+        if not t in stopWords:
+            temp.append(t)
+    return temp
+
+def main():
+    # loadFirstTime()
+    # films = ["Skyscraper_persian.txt","Sleepless_persian.txt","Star_persian.txt","The_persian.txt","We_Have_Always_Lived_in_the_Castle_persian.txt"]
+    films = ["Skyscraper_persian.txt"]
+    
+
+    for film in films :
+        filmSentences = findallSentences(film)
+        normalize_text = normalizer(filmSentences)
+        tokenizedTokens = tokenize(normalize_text)
+        filteredTokens = removeStopWords(tokenizedTokens)
+        saveListTofiles("tokens/"+ film,filteredTokens)
+
+
+
 
 if __name__ == "__main__":
     main()
