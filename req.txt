@@ -1,3 +1,4 @@
 hazm
 sets
-wordcloud_fa
+wordcloud
+matplotlib
